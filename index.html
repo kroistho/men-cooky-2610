@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umami-Abend</title>
+<meta name="description" content="Fünfgänger Asian Fusion – Menü, Rezepte, Zeitplan und Einkaufsliste">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe4; --paper:#fffcf6; --ink:#1e1b17; --muted:#6c645a; --line:#e3dacb;
+  --accent:#b3301c; --accent-soft:#f4ddd5; --gold:#9a7130; --done:#a9a196;
+  --serif:"Shippori Mincho",Georgia,serif; --sans:"Inter",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13120f; --paper:#1c1a16; --ink:#ede7db; --muted:#a69e91; --line:#332f28;
+    --accent:#e2664e; --accent-soft:#3b231d; --gold:#cfa25a; --done:#6f685e;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13120f; --paper:#1c1a16; --ink:#ede7db; --muted:#a69e91; --line:#332f28;
+  --accent:#e2664e; --accent-soft:#3b231d; --gold:#cfa25a; --done:#6f685e;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:var(--serif);line-height:1.2;margin:0}
+a{color:inherit}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav a{flex:none;text-decoration:none;font-size:14px;font-weight:600;padding:7px 12px;border-radius:999px;color:var(--muted)}
+nav a:hover{background:var(--accent-soft);color:var(--accent)}
+nav .brand{font-family:var(--serif);font-size:18px;color:var(--accent);padding-left:0;margin-right:6px}
+
+/* Hero / Menükarte */
+header{padding:56px 0 24px;text-align:center}
+.kanji{font-family:var(--serif);font-size:15px;letter-spacing:.5em;color:var(--accent)}
+header h1{font-size:clamp(40px,8vw,68px);font-weight:800;margin:10px 0 6px}
+header p{color:var(--muted);margin:0}
+.menu-card{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:40px 24px;margin:32px auto 0;max-width:600px;text-align:center;position:relative}
+.menu-card::before{content:"";position:absolute;inset:8px;border:1px solid var(--line);pointer-events:none}
+.course{padding:16px 0}
+.course + .course{border-top:1px dashed var(--line)}
+.course .num{font-family:var(--serif);color:var(--accent);font-size:20px}
+.course h3{font-size:22px;margin:4px 0 4px}
+.course p{margin:0;color:var(--muted);font-size:15px}
+
+/* Controls */
+.controls{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;margin:28px 0 0;font-size:14px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper)}
+.seg button{border:0;background:none;padding:7px 14px;font:600 14px var(--sans);color:var(--ink);cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 14px var(--sans);cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Sections */
+section{padding:56px 0 8px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.sec-head h2{font-size:clamp(26px,5vw,34px)}
+.sec-head span{font-family:var(--serif);color:var(--accent);font-size:15px}
+.lead{color:var(--muted);margin:-6px 0 20px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:16px}
+.card h3{font-size:21px;margin-bottom:12px}
+.card h4{font:700 13px var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:18px 0 8px}
+.card h4:first-child{margin-top:0}
+.grid2{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:760px){.grid2{grid-template-columns:1fr 1fr}}
+
+/* Checklists */
+ul.check{list-style:none;margin:0;padding:0}
+ul.check li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+ul.check li:last-child{border-bottom:0}
+ul.check input{margin-top:4px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+ul.check label{flex:1;cursor:pointer}
+ul.check li.done label{color:var(--done);text-decoration:line-through}
+
+/* Timeline */
+.tl li{align-items:center}
+.tl .t{font:700 15px var(--sans);font-variant-numeric:tabular-nums;width:52px;flex:none;color:var(--accent)}
+.tl li.serve{background:var(--accent-soft);margin:6px -10px;padding:10px;border-radius:8px;border:0}
+.tl li.serve label{font-weight:700}
+
+/* Recipes */
+.recipe{background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:22px;overflow:hidden}
+.recipe-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center}
+.recipe-head .big{font-family:var(--serif);font-size:40px;color:var(--accent);line-height:1;flex:none}
+.recipe-head h3{font-size:23px}
+.recipe-head p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.recipe-body{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:800px){.recipe-body{grid-template-columns:300px 1fr}}
+.ingr{padding:20px 22px;background:color-mix(in srgb,var(--accent-soft) 35%,var(--paper));border-bottom:1px solid var(--line)}
+@media(min-width:800px){.ingr{border-bottom:0;border-right:1px solid var(--line)}}
+.ingr h4,.steps h4{font:700 12px var(--sans);text-transform:uppercase;letter-spacing:.09em;color:var(--gold);margin:16px 0 6px}
+.ingr h4:first-child,.steps h4:first-child{margin-top:0}
+.ingr ul{margin:0;padding:0;list-style:none;font-size:15px}
+.ingr li{padding:3px 0}
+.q{font-weight:700;font-variant-numeric:tabular-nums}
+.steps{padding:20px 22px}
+.steps ol{margin:0;padding:0;list-style:none;counter-reset:s}
+.steps ol li{counter-increment:s;position:relative;padding:0 0 14px 38px}
+.steps ol li::before{content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);font:700 13px/26px var(--sans);text-align:center}
+.tag{display:inline-block;font:700 12px/1 var(--sans);padding:4px 8px;border-radius:5px;margin-right:6px;vertical-align:1px;white-space:nowrap}
+.tag.time{background:var(--ink);color:var(--paper)}
+.tag.oven{background:var(--accent);color:#fff}
+.tip{margin-top:6px;padding:12px 14px;border-left:3px solid var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent);font-size:14px;border-radius:0 6px 6px 0}
+.tip b{color:var(--gold)}
+
+/* Shopping */
+.shop{columns:1;column-gap:16px}
+@media(min-width:760px){.shop{columns:2}}
+.shop .card{break-inside:avoid;display:inline-block;width:100%}
+
+footer{text-align:center;color:var(--muted);font-size:13px;padding:48px 0 64px}
+
+@media print{
+  nav,.controls,.no-print{display:none!important}
+  body{background:#fff}
+  section{padding-top:20px}
+  .recipe,.card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#top" class="brand">旨味</a>
+    <a href="#menu">Menü</a>
+    <a href="#vorbereitung">Vorbereitung</a>
+    <a href="#zeitplan">Zeitplan</a>
+    <a href="#rezepte">Rezepte</a>
+    <a href="#einkauf">Einkauf</a>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="wrap">
+    <div class="kanji">旨 味 の 夜</div>
+    <h1>Umami-Abend</h1>
+    <p>Asian Fusion in fünf Gängen · Start 17.00 Uhr · Servieren ab 19.00 Uhr</p>
+
+    <div class="controls">
+      <span>Portionen:</span>
+      <div class="seg" id="persons">
+        <button data-n="4">4</button><button data-n="5">5</button><button data-n="6">6</button>
+      </div>
+      <button class="btn" id="reset">Häkchen zurücksetzen</button>
+      <button class="btn" onclick="window.print()">Drucken</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- MENÜ -->
+<section id="menu">
+  <div class="sec-head"><span>一</span><h2>Menükarte</h2></div>
+  <div class="menu-card">
+    <div class="course"><div class="num">一</div><h3>Hamachi-Crudo</h3><p>Yuzu-Ponzu · Jalapeño · Koriander</p></div>
+    <div class="course"><div class="num">二</div><h3>Rinds-Tataki</h3><p>Trüffel-Ponzu · Parmesan · Röstschalotten</p></div>
+    <div class="course"><div class="num">三</div><h3>Steinpilz-Miso-Velouté</h3><p>Shiitake-Dumpling · Schnittlauch · Trüffelöl</p></div>
+    <div class="course"><div class="num">四</div><h3>Slow-cooked Spare Ribs</h3><p>Gochujang-Miso-Glasur · Kimchi-Slaw · Furikake-Reis · Sesam-Gurken</p></div>
+    <div class="course"><div class="num">五</div><h3>Schokoladen-Fondant</h3><p>Miso-Karamell · Sesam-Krokant · Vanilleeis</p></div>
+  </div>
+</section>
+
+<!-- VORBEREITUNG -->
+<section id="vorbereitung">
+  <div class="sec-head"><span>二</span><h2>Vorbereitung</h2></div>
+  <p class="lead">Was vor dem Samstag erledigt sein muss.</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Eine Woche vorher</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label>Einkauf im Asia-Laden (haltbare Zutaten, siehe Einkaufsliste)</label></li>
+        <li><input type="checkbox"><label>Hamachi beim Fischhändler bestellen – ausdrücklich <b>Sashimi-Qualität</b>, Abholung Samstag</label></li>
+        <li><input type="checkbox"><label>Spareribs und Rindsfilet beim Metzger bestellen</label></li>
+        <li><input type="checkbox"><label>Material prüfen (Bambuskorb, Förmchen, Stabmixer, Thermometer …)</label></li>
+      </ul>
+      <h4>Vortag (Freitag)</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label>Ribs: Silberhaut entfernen, mit Dry-Rub einreiben, abgedeckt kühl stellen</label></li>
+        <li><input type="checkbox"><label>Getränke kalt stellen</label></li>
+      </ul>
+      <h4>Samstag, bis 17.00 Uhr</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label>Fisch und Fleisch abholen, sofort kühl lagern</label></li>
+        <li><input type="checkbox"><label>Frischprodukte einkaufen</label></li>
+        <li><input type="checkbox"><label>Geschirrspüler leer, Arbeitsflächen frei, Schneidebretter und Messer bereit</label></li>
+        <li><input type="checkbox"><label>Geschirr bereitstellen: 2× flache Teller, tiefe Teller, Hauptgangteller, Dessertteller, Suppenkanne</label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Material</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label>Sehr scharfes Messer (Fisch und Tataki)</label></li>
+        <li><input type="checkbox"><label>Gusseisen- oder Stahlpfanne</label></li>
+        <li><input type="checkbox"><label>Mandoline oder Gemüsehobel</label></li>
+        <li><input type="checkbox"><label>Bambusdämpfer mit passendem Topf</label></li>
+        <li><input type="checkbox"><label>Stabmixer und feines Sieb</label></li>
+        <li><input type="checkbox"><label>Kaffeefilter (für Steinpilz-Einweichwasser)</label></li>
+        <li><input type="checkbox"><label>Küchenthermometer (Frittieröl)</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="5" data-r="int">5</span> Souffléförmchen (ca. 1,5 dl) – eines als Reserve</label></li>
+        <li><input type="checkbox"><label>2 Backbleche, Alufolie, Backpapier, Klarsichtfolie</label></li>
+        <li><input type="checkbox"><label>Küchenpapier, Pinsel, Schwingbesen</label></li>
+      </ul>
+      <div class="tip"><b>Ofen-Logik:</b> Der Ofen ist von 17.15 bis 20.45 Uhr mit den Ribs belegt. Die Dumplings werden deshalb im Bambuskorb gedämpft, die Fondants erst danach gebacken.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ZEITPLAN -->
+<section id="zeitplan">
+  <div class="sec-head"><span>三</span><h2>Zeitplan Samstag</h2></div>
+  <p class="lead">Rot markiert = Servieren. Zum Abhaken während des Abends.</p>
+  <div class="card">
+    <ul class="check tl">
+      <li><span class="t">17.00</span><input type="checkbox"><label>Ofen auf <b>140 °C Ober-/Unterhitze</b> vorheizen · Steinpilze einweichen · beide Ponzu-Saucen anrühren · Rindsfilet aus dem Kühlschrank</label></li>
+      <li><span class="t">17.15</span><input type="checkbox"><label>Ribs in Alufolie einpacken und in den Ofen (3 Std.) · Förmchen buttern und mit Kakao ausstäuben</label></li>
+      <li><span class="t">17.20</span><input type="checkbox"><label>Fondant-Masse herstellen, in Förmchen füllen, kühl stellen</label></li>
+      <li><span class="t">17.30</span><input type="checkbox"><label>Dumpling-Füllung braten und abkühlen lassen · Sesam-Krokant machen</label></li>
+      <li><span class="t">17.45</span><input type="checkbox"><label>Miso-Karamell kochen · Ribs-Glasur aufkochen</label></li>
+      <li><span class="t">18.00</span><input type="checkbox"><label>Dumplings falten · Velouté starten (Pilze anbraten, köcheln)</label></li>
+      <li><span class="t">18.15</span><input type="checkbox"><label>Rindsfilet scharf anbraten, in Folie wickeln, kühl stellen</label></li>
+      <li><span class="t">18.20</span><input type="checkbox"><label>Schalotten frittieren</label></li>
+      <li><span class="t">18.30</span><input type="checkbox"><label>Teller für Gang 1 und 2 kühlen · Gurken salzen · Slaw-Gemüse schneiden (ohne Dressing) · Reis waschen und abtropfen</label></li>
+      <li><span class="t">18.40</span><input type="checkbox"><label>Velouté mit Rahm mixen und durch Sieb streichen, beiseite stellen</label></li>
+      <li><span class="t">18.45</span><input type="checkbox"><label>Apéro · Hamachi aufschneiden, Jalapeño hobeln</label></li>
+      <li class="serve"><span class="t">19.00</span><input type="checkbox"><label>一 Hamachi-Crudo servieren</label></li>
+      <li><span class="t">19.15</span><input type="checkbox"><label>Tataki aufschneiden und anrichten</label></li>
+      <li class="serve"><span class="t">19.30</span><input type="checkbox"><label>二 Rinds-Tataki servieren</label></li>
+      <li><span class="t">19.40</span><input type="checkbox"><label>Reis aufsetzen · Wasser für Bambuskorb aufsetzen · tiefe Teller vorwärmen</label></li>
+      <li><span class="t">19.50</span><input type="checkbox"><label>Velouté erwärmen, Miso einrühren (nicht mehr kochen)</label></li>
+      <li><span class="t">19.58</span><input type="checkbox"><label>Dumplings 6–7 Min. dämpfen</label></li>
+      <li class="serve"><span class="t">20.05</span><input type="checkbox"><label>三 Steinpilz-Miso-Velouté servieren</label></li>
+      <li><span class="t">20.15</span><input type="checkbox"><label>Garprobe Ribs · auspacken, Ofen auf <b>220 °C Umluft</b>, 1. Glasur (10 Min.)</label></li>
+      <li><span class="t">20.25</span><input type="checkbox"><label>2. Glasur (8–10 Min.) · Slaw anmachen · Gurken marinieren · Furikake bereitstellen</label></li>
+      <li><span class="t">20.40</span><input type="checkbox"><label>Ribs ruhen lassen, schneiden, garnieren</label></li>
+      <li class="serve"><span class="t">20.45</span><input type="checkbox"><label>四 Spare Ribs servieren · gleichzeitig Ofen auf <b>200 °C Ober-/Unterhitze</b></label></li>
+      <li><span class="t">21.10</span><input type="checkbox"><label>Miso-Karamell leicht erwärmen · Eis aus dem Tiefkühler</label></li>
+      <li><span class="t">21.15</span><input type="checkbox"><label>Fondants direkt aus dem Kühlschrank 11–12 Min. backen</label></li>
+      <li class="serve"><span class="t">21.30</span><input type="checkbox"><label>五 Schokoladen-Fondant servieren</label></li>
+    </ul>
+  </div>
+</section>
+
+<!-- REZEPTE -->
+<section id="rezepte">
+  <div class="sec-head"><span>四</span><h2>Rezepte</h2></div>
+  <p class="lead">Mengen passen sich der gewählten Portionenzahl an.</p>
+
+  <!-- 1 Hamachi -->
+  <article class="recipe">
+    <div class="recipe-head"><div class="big">一</div><div><h3>Hamachi-Crudo mit Yuzu-Ponzu</h3><p>Kalt · roh · ca. 20 Min. aktive Arbeit</p></div></div>
+    <div class="recipe-body">
+      <div class="ingr">
+        <h4>Fisch</h4>
+        <ul><li><span class="q" data-q="240">240</span> g Hamachi (Gelbschwanzmakrele), Sashimi-Qualität</li></ul>
+        <h4>Yuzu-Ponzu</h4>
+        <ul>
+          <li><span class="q" data-q="3">3</span> EL Sojasauce</li>
+          <li><span class="q" data-q="2">2</span> EL Yuzusaft</li>
+          <li><span class="q" data-q="1">1</span> EL Mirin</li>
+          <li><span class="q" data-q="1">1</span> EL Reisessig</li>
+          <li>1 Stück Kombu (ca. 5 cm)</li>
+        </ul>
+        <h4>Garnitur</h4>
+        <ul>
+          <li>1 Jalapeño</li>
+          <li>½ Bund Koriander</li>
+          <li>Fleur de Sel</li>
+        </ul>
+      </div>
+      <div class="steps">
+        <ol>
+          <li><span class="tag time">17.00</span>Ponzu-Zutaten verrühren, Kombu einlegen, mindestens 1 Std. kühl ziehen lassen. Kombu vor dem Servieren entfernen.</li>
+          <li><span class="tag time">18.30</span>4 flache Teller in den Kühlschrank stellen. Korianderblätter zupfen.</li>
+          <li><span class="tag time">18.45</span>Jalapeño mit der Mandoline hauchdünn hobeln. Fisch direkt aus dem Kühlschrank mit sehr scharfem Messer gegen die Faser in ca. 3 mm dicke Scheiben schneiden – in einem Zug ziehen, nicht sägen. 5–6 Scheiben pro Person.</li>
+          <li><span class="tag time">18.55</span>Scheiben leicht überlappend auf die kalten Teller legen. Auf jede Scheibe ein Jalapeño-Rädchen und ein Korianderblatt. 1–2 EL Ponzu angiessen, wenig Fleur de Sel. Sofort servieren.</li>
+        </ol>
+        <div class="tip"><b>Tipp:</b> Fisch so kurz wie möglich bei Raumtemperatur lassen – kalt lässt er sich viel sauberer schneiden. Alternativen: Thunfisch oder Lachs in Sashimi-Qualität.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 2 Tataki -->
+  <article class="recipe">
+    <div class="recipe-head"><div class="big">二</div><div><h3>Rinds-Tataki mit Trüffel-Ponzu</h3><p>Kalt · kurz angebraten · ca. 30 Min. aktive Arbeit</p></div></div>
+    <div class="recipe-body">
+      <div class="ingr">
+        <h4>Fleisch</h4>
+        <ul>
+          <li><span class="q" data-q="350">350</span> g Rindsfilet (Mittelstück, gleichmässig dick)</li>
+          <li>1 EL neutrales Öl, Salz, Pfeffer</li>
+        </ul>
+        <h4>Trüffel-Ponzu</h4>
+        <ul>
+          <li><span class="q" data-q="3">3</span> EL Sojasauce</li>
+          <li><span class="q" data-q="2">2</span> EL Zitronensaft</li>
+          <li><span class="q" data-q="1">1</span> EL Mirin</li>
+          <li><span class="q" data-q="1">1</span> EL Reisessig</li>
+          <li><span class="q" data-q="1">1</span> TL Trüffelöl</li>
+        </ul>
+        <h4>Garnitur</h4>
+        <ul>
+          <li><span class="q" data-q="30">30</span> g Parmesan am Stück</li>
+          <li>2 Frühlingszwiebeln</li>
+          <li>2 Schalotten + ca. 3 dl Öl zum Frittieren</li>
+          <li>Kresse, etwas Trüffelöl</li>
+        </ul>
+      </div>
+      <div class="steps">
+        <ol>
+          <li><span class="tag time">17.00</span>Fleisch aus dem Kühlschrank nehmen. Ponzu ohne Trüffelöl anrühren.</li>
+          <li><span class="tag time">18.15</span>Fleisch salzen und pfeffern. Pfanne sehr stark erhitzen, Öl dazu, Fleisch rundum je 30–40 Sek. anbraten – aussen Kruste, innen roh. Sofort eng in Klarsichtfolie wickeln und mind. 45 Min. kühl stellen.</li>
+          <li><span class="tag time">18.20</span>Schalotten in feine Ringe schneiden, in Öl bei 160 °C goldbraun frittieren (3–4 Min.), auf Küchenpapier abtropfen, leicht salzen. Sie werden beim Abkühlen knusprig.</li>
+          <li><span class="tag time">19.15</span>Fleisch aus der Folie nehmen und in 2–3 mm dünne Scheiben schneiden, fächerartig auf gekühlte Teller legen. Frühlingszwiebeln in feine Ringe.</li>
+          <li><span class="tag time">19.25</span>Trüffelöl unter den Ponzu rühren, angiessen. Parmesan darüberhobeln, mit Frühlingszwiebeln, Röstschalotten und Kresse garnieren.</li>
+        </ol>
+        <div class="tip"><b>Abkürzung:</b> Fertige Röstzwiebeln statt frittierter Schalotten – spart Öl und 15 Minuten.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 3 Velouté -->
+  <article class="recipe">
+    <div class="recipe-head"><div class="big">三</div><div><h3>Steinpilz-Miso-Velouté mit Shiitake-Dumpling</h3><p>Warm · ca. 75 Min. inkl. Falten</p></div></div>
+    <div class="recipe-body">
+      <div class="ingr">
+        <h4>Velouté</h4>
+        <ul>
+          <li><span class="q" data-q="20">20</span> g getrocknete Steinpilze</li>
+          <li><span class="q" data-q="300">300</span> g braune Champignons</li>
+          <li>1 Schalotte, 1 Knoblauchzehe</li>
+          <li><span class="q" data-q="30">30</span> g Butter</li>
+          <li><span class="q" data-q="0.5">½</span> dl Sake (oder Weisswein)</li>
+          <li><span class="q" data-q="2.5">2½</span> dl Gemüsebouillon</li>
+          <li><span class="q" data-q="1.5">1½</span> dl Vollrahm</li>
+          <li><span class="q" data-q="2">2</span> EL weisse Misopaste</li>
+          <li>1 TL Sojasauce</li>
+          <li>Schnittlauch, Trüffelöl</li>
+        </ul>
+        <h4>Shiitake-Dumplings</h4>
+        <ul>
+          <li><span class="q" data-q="150">150</span> g frische Shiitake</li>
+          <li>1 Frühlingszwiebel</li>
+          <li>1 TL Ingwer, gerieben · 1 Knoblauchzehe</li>
+          <li>10 g Butter · 1 TL Sesamöl</li>
+          <li>1 EL Sojasauce · ½ TL Maisstärke</li>
+          <li><span class="q" data-q="12" data-r="int">12</span> runde Gyoza- oder Wan-Tan-Teigblätter</li>
+        </ul>
+      </div>
+      <div class="steps">
+        <h4>Dumplings</h4>
+        <ol>
+          <li><span class="tag time">17.30</span>Shiitake-Stiele entfernen, Hüte sehr fein hacken. Butter und Sesamöl erhitzen, Shiitake mit Ingwer und Knoblauch 5–6 Min. braten, bis alle Flüssigkeit verdampft ist. Soja dazu, kurz einkochen. Frühlingszwiebel fein schneiden und unterrühren, abkühlen lassen, Maisstärke untermischen.</li>
+          <li><span class="tag time">18.00</span>Je 1 TL Füllung in die Mitte eines Teigblatts, Rand mit Wasser befeuchten, zum Halbmond falten, Luft herausdrücken, Rand in Falten legen. Auf bemehltes Backpapier setzen, mit feuchtem Tuch abdecken, kühl stellen.</li>
+          <li><span class="tag time">19.58</span>Bambuskorb mit gelochtem Backpapier auslegen, über siedendem Wasser 6–7 Min. dämpfen. Alternative: 3–4 Min. in leicht siedendem Salzwasser pochieren.</li>
+        </ol>
+        <h4>Velouté</h4>
+        <ol>
+          <li><span class="tag time">17.00</span>Steinpilze in 2½ dl warmem Wasser einweichen.</li>
+          <li><span class="tag time">18.00</span>Steinpilze ausdrücken und grob hacken, Einweichwasser durch einen Kaffeefilter giessen (Sand). Champignons in Scheiben, Schalotte und Knoblauch fein hacken.</li>
+          <li>Schalotte und Knoblauch in Butter glasig dünsten. Champignons und Steinpilze dazu, 8 Min. kräftig anbraten, bis sie Farbe haben – hier entsteht das Umami.</li>
+          <li>Mit Sake ablöschen und fast vollständig einkochen. Einweichwasser und Bouillon dazu, 20 Min. köcheln.</li>
+          <li><span class="tag time">18.40</span>Rahm dazugeben, mit dem Stabmixer sehr fein pürieren, durch ein Sieb streichen. Beiseite stellen.</li>
+          <li><span class="tag time">19.50</span>Velouté erwärmen, aber nicht kochen. Miso in 2 EL Suppe glatt rühren und einrühren, mit Soja abschmecken. Ab jetzt nicht mehr aufkochen – sonst verliert das Miso sein Aroma.</li>
+          <li><span class="tag time">20.05</span>3 Dumplings in vorgewärmte tiefe Teller legen, Velouté am Tisch aus der Kanne angiessen. Schnittlauch und ein paar Tropfen Trüffelöl.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+
+  <!-- 4 Ribs -->
+  <article class="recipe">
+    <div class="recipe-head"><div class="big">四</div><div><h3>Slow-cooked Spare Ribs mit Gochujang-Miso-Glasur</h3><p>Hauptgang · Vortag marinieren · 3½ Std. Ofen</p></div></div>
+    <div class="recipe-body">
+      <div class="ingr">
+        <h4>Fleisch</h4>
+        <ul>
+          <li><span class="q" data-q="1600">1600</span> g Schweins-Spareribs (ca. 2 Stränge)</li>
+          <li><span class="q" data-q="6">6</span> EL Apfelsaft</li>
+        </ul>
+        <h4>Dry-Rub</h4>
+        <ul>
+          <li><span class="q" data-q="2">2</span> EL brauner Zucker</li>
+          <li><span class="q" data-q="1">1</span> EL Salz</li>
+          <li><span class="q" data-q="2">2</span> TL Fünf-Gewürze-Pulver</li>
+          <li><span class="q" data-q="1">1</span> TL Knoblauchpulver</li>
+          <li><span class="q" data-q="1">1</span> TL Ingwerpulver</li>
+          <li><span class="q" data-q="1">1</span> TL geräuchertes Paprikapulver</li>
+          <li>½ TL Pfeffer</li>
+        </ul>
+        <h4>Glasur</h4>
+        <ul>
+          <li><span class="q" data-q="3">3</span> EL Gochujang</li>
+          <li><span class="q" data-q="1">1</span> EL weisse Misopaste</li>
+          <li><span class="q" data-q="3">3</span> EL Honig</li>
+          <li><span class="q" data-q="2">2</span> EL Sojasauce</li>
+          <li><span class="q" data-q="1">1</span> EL Reisessig</li>
+          <li>1 TL Sesamöl</li>
+          <li>1 Knoblauchzehe und 1 TL Ingwer, gerieben</li>
+        </ul>
+        <h4>Garnitur</h4>
+        <ul><li>1 EL Sesam, geröstet · 2 Frühlingszwiebeln</li></ul>
+      </div>
+      <div class="steps">
+        <h4>Vortag</h4>
+        <ol>
+          <li>Silberhaut auf der Knochenseite mit einem Messer anheben, mit Küchenpapier fassen und abziehen.</li>
+          <li>Rub-Zutaten mischen, Ribs rundum kräftig einreiben, in Folie wickeln und über Nacht kühl stellen.</li>
+        </ol>
+        <h4>Samstag</h4>
+        <ol>
+          <li><span class="tag time">17.00</span><span class="tag oven">140 °C O/U</span>Ofen vorheizen. Jeden Strang mit der Fleischseite nach unten auf doppelte Alufolie legen, je 3 EL Apfelsaft dazugeben und dicht verschliessen.</li>
+          <li><span class="tag time">17.15</span>Auf dem Blech in die Ofenmitte, 3 Std. garen.</li>
+          <li><span class="tag time">17.45</span>Glasur-Zutaten in einer kleinen Pfanne aufkochen und 3 Min. köcheln. Beiseite stellen.</li>
+          <li><span class="tag time">20.15</span><span class="tag oven">220 °C Umluft</span>Garprobe: Ein Knochen lässt sich leicht drehen. Ribs auspacken, Saft abgiessen, mit der Fleischseite nach oben auf ein Blech mit Backpapier legen. Dick glasieren, 10 Min. in den Ofen.</li>
+          <li><span class="tag time">20.25</span>Ein zweites Mal glasieren, nochmals 8–10 Min., bis die Glasur karamellisiert. Dabeibleiben – der Zucker verbrennt schnell.</li>
+          <li><span class="tag time">20.40</span>5 Min. ruhen lassen, zwischen den Knochen schneiden. Mit Sesam und Frühlingszwiebel-Ringen bestreuen.</li>
+        </ol>
+        <div class="tip"><b>Edlere Variante:</b> Nach dem Garen die Knochen herausziehen, Fleisch in Tranchen schneiden und erst dann glasieren. <b>Combi-Steamer:</b> Die 3 Std. Garzeit können auch ohne Folie mit Dampfunterstützung laufen – Herstellerangaben beachten.</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Beilagen -->
+  <article class="recipe">
+    <div class="recipe-head"><div class="big">四</div><div><h3>Beilagen zu den Ribs</h3><p>Kimchi-Slaw · Furikake-Reis · Sesam-Gurken</p></div></div>
+    <div class="recipe-body">
+      <div class="ingr">
+        <h4>Kimchi-Slaw</h4>
+        <ul>
+          <li><span class="q" data-q="300">300</span> g Spitzkabis</li>
+          <li>1 Karotte</li>
+          <li><span class="q" data-q="150">150</span> g Kimchi</li>
+          <li>2 Frühlingszwiebeln, etwas Koriander</li>
+          <li><span class="q" data-q="2">2</span> EL Kewpie-Mayonnaise</li>
+          <li>1 EL Reisessig · 1 TL Sesamöl · 1 TL Zucker</li>
+          <li>1 EL Kimchi-Saft</li>
+        </ul>
+        <h4>Furikake-Reis</h4>
+        <ul>
+          <li><span class="q" data-q="250">250</span> g Sushi-Reis</li>
+          <li><span class="q" data-q="3">3</span> dl Wasser</li>
+          <li>2 EL Furikake · 1 TL Butter</li>
+        </ul>
+        <h4>Sesam-Gurken</h4>
+        <ul>
+          <li>1 Salatgurke · 1 TL Salz</li>
+          <li>1 EL Reisessig · 1 TL Sesamöl · 1 TL Zucker</li>
+          <li>½ TL Chiliflocken · 1 TL Sesam</li>
+        </ul>
+      </div>
+      <div class="steps">
+        <h4>Kimchi-Slaw</h4>
+        <ol>
+          <li><span class="tag time">18.30</span>Kabis fein hobeln, Karotte in feine Streifen, Kimchi grob hacken, Frühlingszwiebeln schräg schneiden. Dressing verrühren. Alles getrennt kühl stellen.</li>
+          <li><span class="tag time">20.25</span>Gemüse mit Dressing mischen, Koriander darüber. Nicht früher – sonst wird der Kabis weich.</li>
+        </ol>
+        <h4>Furikake-Reis</h4>
+        <ol>
+          <li><span class="tag time">18.30</span>Reis in kaltem Wasser waschen, bis es klar bleibt. Abtropfen lassen.</li>
+          <li><span class="tag time">19.40</span>Reis mit Wasser aufkochen, Deckel drauf, 12 Min. auf kleinster Stufe garen, dann 10 Min. neben dem Herd ziehen lassen (Deckel nicht öffnen).</li>
+          <li><span class="tag time">20.40</span>Butter unterziehen, mit Furikake bestreut servieren.</li>
+        </ol>
+        <h4>Sesam-Gurken</h4>
+        <ol>
+          <li><span class="tag time">18.30</span>Gurke mit dem Messerrücken flach anschlagen, in mundgerechte Stücke brechen, salzen und 15 Min. ziehen lassen.</li>
+          <li><span class="tag time">20.25</span>Wasser abgiessen, mit Essig, Sesamöl, Zucker, Chili und Sesam marinieren.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+
+  <!-- 5 Dessert -->
+  <article class="recipe">
+    <div class="recipe-head"><div class="big">五</div><div><h3>Schokoladen-Fondant mit Miso-Karamell</h3><p>Dessert · Masse vorbereiten, kurz vor dem Servieren backen</p></div></div>
+    <div class="recipe-body">
+      <div class="ingr">
+        <h4>Fondant</h4>
+        <ul>
+          <li><span class="q" data-q="100">100</span> g dunkle Schokolade (ca. 70 %)</li>
+          <li><span class="q" data-q="100">100</span> g Butter + etwas für die Förmchen</li>
+          <li><span class="q" data-q="2" data-r="int">2</span> Eier + <span class="q" data-q="2" data-r="int">2</span> Eigelb</li>
+          <li><span class="q" data-q="50">50</span> g Zucker</li>
+          <li><span class="q" data-q="20">20</span> g Mehl</li>
+          <li>Kakaopulver für die Förmchen</li>
+        </ul>
+        <h4>Miso-Karamell</h4>
+        <ul>
+          <li><span class="q" data-q="100">100</span> g Zucker · 3 EL Wasser</li>
+          <li><span class="q" data-q="0.8">0,8</span> dl Vollrahm, warm</li>
+          <li><span class="q" data-q="20">20</span> g Butter</li>
+          <li><span class="q" data-q="1">1</span> EL weisse Misopaste</li>
+        </ul>
+        <h4>Sesam-Krokant</h4>
+        <ul>
+          <li><span class="q" data-q="60">60</span> g Zucker</li>
+          <li><span class="q" data-q="40">40</span> g Sesam (hell und schwarz gemischt)</li>
+          <li>1 Prise Salz</li>
+        </ul>
+        <h4>Dazu</h4>
+        <ul><li><span class="q" data-q="5" data-r="int">5</span> dl Vanilleeis</li></ul>
+      </div>
+      <div class="steps">
+        <h4>Fondant</h4>
+        <ol>
+          <li><span class="tag time">17.15</span>Förmchen mit weicher Butter auspinseln (Striche von unten nach oben), mit Kakao ausstäuben, kühl stellen.</li>
+          <li><span class="tag time">17.20</span>Schokolade und Butter über dem Wasserbad schmelzen, leicht abkühlen lassen.</li>
+          <li>Eier, Eigelb und Zucker 4 Min. hell und schaumig aufschlagen. Schokolade unterrühren, Mehl darübersieben und vorsichtig unterheben.</li>
+          <li>Förmchen zu ¾ füllen und bis zum Backen kühl stellen.</li>
+          <li><span class="tag time">20.45</span><span class="tag oven">200 °C O/U</span>Ofen vorheizen (nach den Ribs).</li>
+          <li><span class="tag time">21.15</span>Fondants direkt aus dem Kühlschrank 11–12 Min. backen: Der Rand ist fest, die Mitte wackelt noch.</li>
+          <li><span class="tag time">21.27</span>1 Min. ruhen lassen, Rand mit einem Messer lösen, auf Teller stürzen. Miso-Karamell, Krokant-Splitter und eine Kugel Eis dazu.</li>
+        </ol>
+        <h4>Krokant und Karamell</h4>
+        <ol>
+          <li><span class="tag time">17.30</span>Krokant: Zucker trocken in einer Pfanne goldbraun schmelzen, Sesam und Salz einrühren, sofort dünn auf Backpapier ausstreichen. Auskühlen lassen, in Splitter brechen.</li>
+          <li><span class="tag time">17.45</span>Karamell: Zucker und Wasser ohne Rühren bernsteinfarben kochen. Vom Herd ziehen, warmen Rahm vorsichtig dazugiessen (spritzt!), Butter und Miso einrühren.</li>
+          <li><span class="tag time">21.10</span>Karamell bei Bedarf leicht erwärmen, damit es fliesst.</li>
+        </ol>
+        <div class="tip"><b>Tipp:</b> Das fünfte Förmchen ist die Versicherung – lieber einen Fondant zu viel als einen gebrochenen auf dem Teller.</div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- EINKAUF -->
+<section id="einkauf">
+  <div class="sec-head"><span>五</span><h2>Einkaufsliste</h2></div>
+  <p class="lead">Gesamtmengen für alle Gänge, nach Geschäft gruppiert. Grundvorräte am Schluss kurz prüfen.</p>
+  <div class="shop">
+    <div class="card">
+      <h4>Fischhändler (vorbestellen)</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label><span class="q" data-q="240">240</span> g Hamachi, Sashimi-Qualität</label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Metzger (vorbestellen)</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label><span class="q" data-q="1600">1600</span> g Schweins-Spareribs</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="350">350</span> g Rindsfilet, Mittelstück</label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Asia-Laden</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label>Japanische Sojasauce (1 Flasche)</label></li>
+        <li><input type="checkbox"><label>Mirin</label></li>
+        <li><input type="checkbox"><label>Reisessig</label></li>
+        <li><input type="checkbox"><label>Yuzusaft</label></li>
+        <li><input type="checkbox"><label>Kombu (1 Packung)</label></li>
+        <li><input type="checkbox"><label>Weisse Misopaste (Shiro Miso)</label></li>
+        <li><input type="checkbox"><label>Gochujang</label></li>
+        <li><input type="checkbox"><label>Sake (oder Weisswein verwenden)</label></li>
+        <li><input type="checkbox"><label>Geröstetes Sesamöl</label></li>
+        <li><input type="checkbox"><label>Fünf-Gewürze-Pulver</label></li>
+        <li><input type="checkbox"><label>Furikake</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="250">250</span> g Sushi-Reis</label></li>
+        <li><input type="checkbox"><label>Gyoza- oder Wan-Tan-Teigblätter, rund (<span class="q" data-q="12" data-r="int">12</span> Stück, tiefgekühlt)</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="150">150</span> g Kimchi</label></li>
+        <li><input type="checkbox"><label>Kewpie-Mayonnaise</label></li>
+        <li><input type="checkbox"><label>Schwarzer Sesam</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="150">150</span> g frische Shiitake</label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Gemüse und Kräuter</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label><span class="q" data-q="300">300</span> g braune Champignons</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="20">20</span> g getrocknete Steinpilze</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="300">300</span> g Spitzkabis</label></li>
+        <li><input type="checkbox"><label>1 Karotte</label></li>
+        <li><input type="checkbox"><label>1 Salatgurke</label></li>
+        <li><input type="checkbox"><label>1 Jalapeño</label></li>
+        <li><input type="checkbox"><label>2 Bund Frühlingszwiebeln</label></li>
+        <li><input type="checkbox"><label>3 Schalotten</label></li>
+        <li><input type="checkbox"><label>1 Knolle Knoblauch</label></li>
+        <li><input type="checkbox"><label>1 Stück Ingwer (ca. 5 cm)</label></li>
+        <li><input type="checkbox"><label>1 Zitrone</label></li>
+        <li><input type="checkbox"><label>1 Bund Koriander</label></li>
+        <li><input type="checkbox"><label>1 Bund Schnittlauch</label></li>
+        <li><input type="checkbox"><label>1 Schale Kresse</label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Milchprodukte und Kühlregal</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label><span class="q" data-q="250">250</span> g Butter</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="2.5">2½</span> dl Vollrahm</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="4" data-r="int">4</span> Eier</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="30">30</span> g Parmesan am Stück</label></li>
+        <li><input type="checkbox"><label><span class="q" data-q="5" data-r="int">5</span> dl Vanilleeis</label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Trockenwaren und Diverses</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label><span class="q" data-q="100">100</span> g dunkle Schokolade (ca. 70 %)</label></li>
+        <li><input type="checkbox"><label>Trüffelöl</label></li>
+        <li><input type="checkbox"><label>Honig</label></li>
+        <li><input type="checkbox"><label>Heller Sesam</label></li>
+        <li><input type="checkbox"><label>Geräuchertes Paprikapulver</label></li>
+        <li><input type="checkbox"><label>Apfelsaft (1 kleine Flasche)</label></li>
+        <li><input type="checkbox"><label>Gemüsebouillon</label></li>
+        <li><input type="checkbox"><label>Alufolie, Backpapier, Klarsichtfolie</label></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Vorrat prüfen</h4>
+      <ul class="check">
+        <li><input type="checkbox"><label>Zucker (ca. <span class="q" data-q="250">250</span> g) und brauner Zucker</label></li>
+        <li><input type="checkbox"><label>Mehl und Maisstärke</label></li>
+        <li><input type="checkbox"><label>Kakaopulver</label></li>
+        <li><input type="checkbox"><label>Neutrales Öl (ca. 4 dl inkl. Frittieren)</label></li>
+        <li><input type="checkbox"><label>Salz, Fleur de Sel, Pfeffer</label></li>
+        <li><input type="checkbox"><label>Knoblauch- und Ingwerpulver</label></li>
+        <li><input type="checkbox"><label>Chiliflocken</label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>旨味 · Umami-Abend · Guten Appetit</footer>
+
+<script>
+(function(){
+  var BASE = 4;
+  function store(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){ return null; } }
+
+  function fmt(v, r){
+    if(r === 'int') return String(Math.ceil(v - 1e-9));
+    var x;
+    if(v >= 200) x = Math.round(v/10)*10;
+    else if(v >= 50) x = Math.round(v/5)*5;
+    else if(v < 1) x = Math.round(v*10)/10;
+    else x = Math.round(v*2)/2;
+    if(x === 0) x = 0.5;
+    if(v < 1 && x !== 0.5) return String(x).replace('.', ',');
+    var w = Math.floor(x), h = x - w;
+    if(h > 0.25 && h < 0.75) return (w ? w : '') + '½';
+    return String(w);
+  }
+
+  var buttons = document.querySelectorAll('#persons button');
+  function setPersons(n){
+    document.querySelectorAll('.q').forEach(function(el){
+      el.textContent = fmt(parseFloat(el.dataset.q) * n / BASE, el.dataset.r);
+    });
+    buttons.forEach(function(b){ b.classList.toggle('on', +b.dataset.n === n); });
+    store('umami-persons', String(n));
+  }
+  buttons.forEach(function(b){ b.addEventListener('click', function(){ setPersons(+b.dataset.n); }); });
+  setPersons(parseInt(store('umami-persons'), 10) || BASE);
+
+  var boxes = document.querySelectorAll('input[type=checkbox]');
+  boxes.forEach(function(cb, i){
+    var key = 'umami-cb-' + i;
+    var id = 'cb' + i;
+    cb.id = id;
+    var label = cb.parentNode.querySelector('label');
+    if(label) label.setAttribute('for', id);
+    if(store(key) === '1'){ cb.checked = true; cb.parentNode.classList.add('done'); }
+    cb.addEventListener('change', function(){
+      cb.parentNode.classList.toggle('done', cb.checked);
+      store(key, cb.checked ? '1' : '0');
+    });
+  });
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if(!confirm('Alle Häkchen zurücksetzen?')) return;
+    boxes.forEach(function(cb, i){ cb.checked = false; cb.parentNode.classList.remove('done'); store('umami-cb-' + i, '0'); });
+  });
+})();
+</script>
+</body>
+</html>
